@@ -83,6 +83,7 @@
             datagrid.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             datagrid.Size = new Size(1001, 791);
             datagrid.TabIndex = 0;
+            datagrid.CellClick += datagrid_CellClick;
             datagrid.RowHeaderMouseClick += datagrid_RowHeaderMouseClick;
             // 
             // loadbtn
@@ -288,7 +289,7 @@
             studentPictureBox.Location = new Point(3, 3);
             studentPictureBox.Name = "studentPictureBox";
             studentPictureBox.Size = new Size(157, 129);
-            studentPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+            studentPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
             studentPictureBox.TabIndex = 0;
             studentPictureBox.TabStop = false;
             // 

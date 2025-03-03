@@ -52,29 +52,15 @@ namespace Data_Base_Acess
                 DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete this record?", "Confirm Delete", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
                 {
-                    try
-                    {
-                        string delete_query = "Delete From Student Where ID = @id";
-                        oleDbConnection = new OleDbConnection($"{Data}");
-                        oleDbCommand = new OleDbCommand(delete_query, oleDbConnection);
-                        oleDbCommand.Parameters.AddWithValue("@id", datagrid.CurrentRow.Cells[0].Value);
-                        oleDbConnection.Open();
-                        oleDbCommand.ExecuteNonQuery();
-                        oleDbConnection.Close();
-                        refreshbtn_Click(sender, e);
-                        MessageBox.Show("Record deleted successfully!");
-                    }
-                    catch (OleDbException ex)
-                    {
-                        MessageBox.Show($"An error occurred: {ex.Message}");
-                    }
-                    finally
-                    {
-                        if (oleDbConnection.State == ConnectionState.Open)
-                        {
-                            oleDbConnection.Close();
-                        }
-                    }
+                    string delete_query = "Delete From Student Where ID = @id";
+                    oleDbConnection = new OleDbConnection($"{Data}");
+                    oleDbCommand = new OleDbCommand(delete_query, oleDbConnection);
+                    oleDbCommand.Parameters.AddWithValue("@id", datagrid.CurrentRow.Cells[0].Value);
+                    oleDbConnection.Open();
+                    oleDbCommand.ExecuteNonQuery();
+                    oleDbConnection.Close();
+                    refreshbtn_Click(sender, e);
+                    MessageBox.Show("Record deleted successfully!");
                 }
             }
             else
@@ -111,32 +97,7 @@ namespace Data_Base_Acess
         //Display the data from the access database to the textboxes and picture box
         private void datagrid_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            indexRow = e.RowIndex;
-            DataGridViewRow row = datagrid.Rows[indexRow];
-            idlbl.Text = "Student ID: " + row.Cells[0].Value.ToString();
-            lastNametxtb.Text = row.Cells[1].Value.ToString();
-            firstNametxtb.Text = row.Cells[2].Value.ToString();
-            coursebx.Text = row.Cells[3].Value.ToString();
-            yeartxtb.Text = row.Cells[4].Value.ToString();
-            subjecttxtb.Text = row.Cells[5].Value.ToString();
-            gradetxtb.Text = row.Cells[6].Value.ToString();
-            //Add photo to picture box
-            string studentId = row.Cells[0].Value.ToString();
-            string query = "SELECT PhotoPath FROM Student WHERE ID = @id";
-            oleDbCommand = new OleDbCommand(query, oleDbConnection);
-            oleDbCommand.Parameters.AddWithValue("@id", studentId);
-            oleDbConnection.Open();
-            object result = oleDbCommand.ExecuteScalar();
-            oleDbConnection.Close();
-
-            if (result != null && !string.IsNullOrEmpty(result.ToString()))
-            {
-                studentPictureBox.ImageLocation = result.ToString();
-            }
-            else
-            {
-                studentPictureBox.Image = null;
-            }
+            content(sender, new DataGridViewCellEventArgs(e.ColumnIndex, e.RowIndex));
         }
         //this will show a tooltip when the mouse hovers over the button
         private void loadbtn_MouseHover(object sender, EventArgs e)
@@ -249,7 +210,7 @@ namespace Data_Base_Acess
             }
             else
             {
-                loadbtn.Enabled = false;
+                loadbtn.Enabled = true;
                 addbtn.Enabled = true;
                 updatebtn.Enabled = true;
                 deletebtn.Enabled = true;
@@ -270,6 +231,39 @@ namespace Data_Base_Acess
             {
                 return false;
             }
+        }
+        private void datagrid_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            content(sender, e);
+        }
+        private void content(object sender, DataGridViewCellEventArgs e) 
+        {
+             indexRow = e.RowIndex;
+                DataGridViewRow row = datagrid.Rows[indexRow];
+                idlbl.Text = "Student ID: " + row.Cells[0].Value.ToString();
+                lastNametxtb.Text = row.Cells[1].Value.ToString();
+                firstNametxtb.Text = row.Cells[2].Value.ToString();
+                coursebx.Text = row.Cells[3].Value.ToString();
+                yeartxtb.Text = row.Cells[4].Value.ToString();
+                subjecttxtb.Text = row.Cells[5].Value.ToString();
+                gradetxtb.Text = row.Cells[6].Value.ToString();
+                //Add photo to picture box
+                string studentId = row.Cells[0].Value.ToString();
+                string query = "SELECT PhotoPath FROM Student WHERE ID = @id";
+                oleDbCommand = new OleDbCommand(query, oleDbConnection);
+                oleDbCommand.Parameters.AddWithValue("@id", studentId);
+                oleDbConnection.Open();
+                object result = oleDbCommand.ExecuteScalar();
+                oleDbConnection.Close();
+
+                if (result != null && !string.IsNullOrEmpty(result.ToString()))
+                {
+                    studentPictureBox.ImageLocation = result.ToString();
+                }
+                else
+                {
+                    studentPictureBox.Image = null;
+                }
         }
     }
 }
